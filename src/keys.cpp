@@ -421,7 +421,8 @@ long PubKey::Encrypt(Ctxt& ctxt,
 
       NTL::ZZ B;
       B = context.productOfPrimes(context.getCtxtPrimes());
-      B /= (ptxtSpace * 8);
+      B /= (ptxtSpace * 32 * sqrt(context.getZMStar().getPhiM()));
+      B -= NTL::to_ZZ(ctxt.totalNoiseBound());
 
       e_bound = e.sampleUniform(B);
       // FIXME: should we use a bounded version of this?

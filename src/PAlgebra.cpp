@@ -712,6 +712,10 @@ PAlgebraModDerived<type>::PAlgebraModDerived(const PAlgebra& _zMStar, long _r) :
 
   EDF(localFactors, phimxmod, zMStar.getOrdP()); // equal-degree factorization
 
+  // EDF is randomized, so the code below ensures a consistent order of factors.
+  // We make the lexicographically smallest factor have index 0.
+  // The remaining factors are ordered according to their representatives.
+
   RX* first = &localFactors[0];
   RX* last = first + lsize(localFactors);
   RX* smallest =
@@ -719,9 +723,6 @@ PAlgebraModDerived<type>::PAlgebraModDerived(const PAlgebra& _zMStar, long _r) :
                        last,
                        static_cast<bool (*)(const RX&, const RX&)>(less_than));
   swap(*first, *smallest);
-
-  // We make the lexicographically smallest factor have index 0.
-  // The remaining factors are ordered according to their representatives.
 
   RXModulus F1(localFactors[0]);
   for (long i = 1; i < nSlots; i++) {
@@ -742,7 +743,7 @@ PAlgebraModDerived<type>::PAlgebraModDerived(const PAlgebra& _zMStar, long _r) :
     }
   }*******************************************************************/
 
-  if (r == 1) {
+  if (r == 1) { // Directly use the phimxmod and factors from above
     build(PhimXMod, phimxmod);
     factors = localFactors;
     pPowRContext.save();
@@ -754,7 +755,7 @@ PAlgebraModDerived<type>::PAlgebraModDerived(const PAlgebra& _zMStar, long _r) :
       te %= factors[i];                     // \prod_{j\ne i} Fj mod Fi
       InvMod(crtCoeffs[i], te, factors[i]); // \prod_{j\ne i} Fj^{-1} mod Fi
     }
-  } else {
+  } else { // Hensel-lift the phimxmod and factors from above
     PAlgebraLift(zMStar.getPhimX(), localFactors, factors, crtCoeffs, r);
     RX phimxmod1;
     conv(phimxmod1, zMStar.getPhimX());
