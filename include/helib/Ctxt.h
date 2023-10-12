@@ -1262,6 +1262,26 @@ public:
   //! @brief Add a high-noise encryption of the given constant
   void blindCtxt(const NTL::ZZX& poly);
 
+  // FIXME: These are bugs waiting to happen, the above should be private (if at all),
+  //   and the below must check consistency between *this and the given plaintext
+
+  //! @brief Add a high-noise encryption of the given constant
+  template <typename Scheme>
+  void blindCtxt(const helib::Ptxt<Scheme>& pt) {
+    blindCtxt(pt.getPolyRepr());
+  }
+
+  //! @brief Add a high-noise encryption of the given constant
+  void blindCtxt(const helib::EncodedPtxt& pt) {
+    NTL::ZZX poly;
+    if (pt.isBGV()) {
+      helib::convert(poly, (NTL::Vec<long>)pt.getBGV().getPoly());
+    } else {
+      helib::convert(poly, (NTL::Vec<long>)pt.getBGV().getPoly());
+    }
+    blindCtxt(poly);
+  }
+
   //! @brief Estimate the added noise
   NTL::xdouble modSwitchAddedNoiseBound() const;
 

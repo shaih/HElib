@@ -417,7 +417,8 @@ long PubKey::Encrypt(Ctxt& ctxt,
 
     if (highNoise && i == 0) {
       // we sample e so that coefficients are uniform over
-      // [-Q/(8*ptxtSpace)..Q/(8*ptxtSpace)]
+      // [-Q/x +y..Q/x -y],
+      // with x = 32*p*sqrt(phi(m)), y=currentNoiseBound
 
       NTL::ZZ B;
       B = context.productOfPrimes(context.getCtxtPrimes());
