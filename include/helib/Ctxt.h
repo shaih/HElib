@@ -1268,18 +1268,14 @@ public:
   //! @brief Add a high-noise encryption of the given constant
   template <typename Scheme>
   void blindCtxt(const helib::Ptxt<Scheme>& pt) {
-    blindCtxt(pt.getPolyRepr());
+    *this += pt;
+    blindCtxt(NTL::ZZX::zero());
   }
 
   //! @brief Add a high-noise encryption of the given constant
   void blindCtxt(const helib::EncodedPtxt& pt) {
-    NTL::ZZX poly;
-    if (pt.isBGV()) {
-      helib::convert(poly, (NTL::Vec<long>)pt.getBGV().getPoly());
-    } else {
-      helib::convert(poly, (NTL::Vec<long>)pt.getBGV().getPoly());
-    }
-    blindCtxt(poly);
+    *this += pt;
+    blindCtxt(NTL::ZZX::zero());
   }
 
   //! @brief Estimate the added noise
